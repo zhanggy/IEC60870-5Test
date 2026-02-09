@@ -1,0 +1,2 @@
+# IEC60870-5-101/104 Test Tool Dependencies
+pyserial>=3.5
