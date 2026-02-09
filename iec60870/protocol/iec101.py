@@ -78,14 +78,14 @@ class FT12Frame:
     def decode(data):
         """Decode FT1.2 frame from bytes"""
         if len(data) < 5:
-            return None
+            return None, 0
         
         start = data[0]
         
         if start == FT12Frame.START_BYTE_FIXED:
             # Fixed length frame (5 bytes)
             if len(data) < 5:
-                return None
+                return None, 0
             
             control = data[1]
             address = data[2]
@@ -94,35 +94,35 @@ class FT12Frame:
             
             if end != FT12Frame.END_BYTE:
                 logger.error("Invalid end byte in fixed frame")
-                return None
+                return None, 0
             
             calc_checksum = (control + address) & 0xFF
             if checksum != calc_checksum:
                 logger.error("Checksum mismatch in fixed frame")
-                return None
+                return None, 0
             
             return FT12Frame(control, address, None), 5
             
         elif start == FT12Frame.START_BYTE_VARIABLE:
             # Variable length frame
             if len(data) < 4:
-                return None
+                return None, 0
             
             length1 = data[1]
             length2 = data[2]
             
             if length1 != length2:
                 logger.error("Length mismatch in variable frame")
-                return None
+                return None, 0
             
             frame_length = 6 + length1  # start(1) + len(1) + len(1) + start(1) + data + cs(1) + end(1)
             
             if len(data) < frame_length:
-                return None
+                return None, 0
             
             if data[3] != FT12Frame.START_BYTE_VARIABLE:
                 logger.error("Invalid second start byte")
-                return None
+                return None, 0
             
             control = data[4]
             address = data[5]
@@ -132,7 +132,7 @@ class FT12Frame:
             
             if end != FT12Frame.END_BYTE:
                 logger.error("Invalid end byte in variable frame")
-                return None
+                return None, 0
             
             # Verify checksum
             calc_checksum = control + address
@@ -142,7 +142,7 @@ class FT12Frame:
             
             if checksum != calc_checksum:
                 logger.error("Checksum mismatch in variable frame")
-                return None
+                return None, 0
             
             return FT12Frame(control, address, user_data), frame_length
         
@@ -253,15 +253,15 @@ class IEC101Client:
                     
                     # Try to parse frames
                     while len(buffer) >= 5:
-                        result = FT12Frame.decode(buffer)
-                        if result is None:
-                            # Invalid frame, skip first byte
-                            buffer = buffer[1:]
-                            continue
-                        
-                        frame, length = result
+                        frame, length = FT12Frame.decode(buffer)
                         if frame is None:
-                            break  # Need more data
+                            if length == 0:
+                                # Invalid frame, skip first byte
+                                buffer = buffer[1:]
+                                continue
+                            else:
+                                # Need more data
+                                break
                         
                         buffer = buffer[length:]
                         self._process_frame(frame)
