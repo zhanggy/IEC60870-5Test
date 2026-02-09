@@ -1,0 +1,42 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 2404,
+    "max_connections": 5
+  },
+  "protocol": {
+    "t0": 30,
+    "t1": 15,
+    "t2": 10,
+    "t3": 20,
+    "k": 12,
+    "w": 8
+  },
+  "station": {
+    "common_address": 1,
+    "cot_size": 2,
+    "asdu_address_size": 2,
+    "ioa_size": 3
+  },
+  "data_points": {
+    "single_point": [
+      {"ioa": 1, "value": false, "quality": 0},
+      {"ioa": 2, "value": true, "quality": 0}
+    ],
+    "double_point": [
+      {"ioa": 100, "value": 2, "quality": 0}
+    ],
+    "step_position": [
+      {"ioa": 200, "value": 0, "quality": 0}
+    ],
+    "measured_normalized": [
+      {"ioa": 1000, "value": 0.5, "quality": 0}
+    ],
+    "measured_scaled": [
+      {"ioa": 2000, "value": 12345, "quality": 0}
+    ],
+    "measured_float": [
+      {"ioa": 3000, "value": 123.45, "quality": 0}
+    ]
+  }
+}

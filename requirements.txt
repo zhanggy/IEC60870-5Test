@@ -1,0 +1,5 @@
+# IEC60870-5-104 Slave Test Framework Requirements
+# No external dependencies required for basic functionality
+# Optional dependencies for enhanced features:
+# pytest>=7.0.0  # For testing
+# pyyaml>=6.0    # For YAML configuration support
