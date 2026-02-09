@@ -158,6 +158,20 @@ class TestASDU(unittest.TestCase):
         encoded = asdu.encode()
         self.assertEqual(encoded[0], 100)  # Type ID
         self.assertEqual(encoded[2], 6)    # COT
+        
+        # Test decode
+        decoded_asdu = ASDU.decode(encoded)
+        self.assertIsNotNone(decoded_asdu)
+        self.assertEqual(decoded_asdu.type_id, 100)
+        self.assertEqual(decoded_asdu.cot, 6)
+        self.assertEqual(decoded_asdu.ca.address, 1)
+    
+    def test_decode_malformed(self):
+        """Test ASDU decode with malformed data"""
+        # Too short data
+        short_data = b'\x01\x02'
+        asdu = ASDU.decode(short_data)
+        self.assertIsNone(asdu)
 
 
 if __name__ == '__main__':

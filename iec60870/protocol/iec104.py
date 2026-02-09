@@ -208,7 +208,7 @@ class IEC104Client:
         if self.socket:
             try:
                 self.socket.close()
-            except:
+            except Exception:
                 pass
         self.connected = False
         logger.info("Disconnected")

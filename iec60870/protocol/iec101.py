@@ -200,7 +200,7 @@ class IEC101Client:
         if self.serial:
             try:
                 self.serial.close()
-            except:
+            except Exception:
                 pass
         self.connected = False
         logger.info("Disconnected")
